@@ -58,7 +58,7 @@ router.delete('/users/:id', async (seq, res) => {
         res.status(500).send()
     }
 })
-router.get('test',async(req,res)=>{
+router.get('/test',async(req,res)=>{
     res.send({
         test:'passed'
     })
