@@ -21,7 +21,7 @@ router.get('/tasks', async (req, res) => {
     }
 })
 router.get('/tasks/:id', async (req, res) => {
-    const _id = req.params._id
+    const _id = req.params.id
     try {
         if (!task) {
             return res.status(404).send()
@@ -33,8 +33,8 @@ router.get('/tasks/:id', async (req, res) => {
         res.status(500).send(err)
     }
 })
-router.patch('/tasks:/id', async (req, res) => {
-    const _id = req.params._id
+router.patch('/tasks/:id', async (req, res) => {
+    const _id = req.params.id
     try {
         const task = await Task.findByIdAndUpdate(_id, req.body, { new: true, runValidator: true })
         if (!task) {
@@ -46,8 +46,8 @@ router.patch('/tasks:/id', async (req, res) => {
         res.status(400).send(err)
     }
 })
-router.delete('/tasks/:id', async (seq, res) => {
-    const _id = req.params._id
+router.delete('/tasks/:id', async (req, res) => {
+    const _id = req.params.id
     try {
         const task = await Task.findByIdAndDelete(_id)
         if (!task) {
@@ -55,7 +55,7 @@ router.delete('/tasks/:id', async (seq, res) => {
         }
     }
     catch (err) {
-        res.status(500).send()
+        res.status(500).send(err)
     }
 })
 

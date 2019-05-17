@@ -21,7 +21,7 @@ router.get('/users', async (req, res) => {
     }
 })
 router.get('/users/:id', async (req, res) => {
-    const _id = req.params._id
+    const _id = req.params.id
     try {
         if (!user) {
             return res.status(404).send()
@@ -33,10 +33,13 @@ router.get('/users/:id', async (req, res) => {
         res.status(500).send(err)
     }
 })
-router.patch('/users:/id', async (req, res) => {
-    const _id = req.params._id
+router.patch('/users/:id', async (req, res) => {
+    const _id = req.params.id
+    const updates=Object.keys(req.body)
     try {
-        const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidator: true })
+        const user= await User.findById(_id)
+        updates.forEach((update)=>user[update]=req.body[update])
+        await user.save()
         if (!user) {
             return res.status(404).send()
         }
@@ -46,8 +49,8 @@ router.patch('/users:/id', async (req, res) => {
         res.status(400).send(err)
     }
 })
-router.delete('/users/:id', async (seq, res) => {
-    const _id = req.params._id
+router.delete('/users/:id', async (req, res) => {
+    const _id = req.params.id
     try {
         const user = await User.findByIdAndDelete(_id)
         if (!user) {
@@ -55,7 +58,7 @@ router.delete('/users/:id', async (seq, res) => {
         }
     }
     catch (err) {
-        res.status(500).send()
+        res.status(500).send(err)
     }
 })
 

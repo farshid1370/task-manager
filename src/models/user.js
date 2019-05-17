@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-
-const User = mongoose.model('User', {
+const bcrype = require('bcryptjs')
+const userShema = new mongoose.Schema({
     firstName: {
         type: String,
         require: true,
@@ -19,22 +19,31 @@ const User = mongoose.model('User', {
             }
         },
     },
-    email:{
-        type:String,
-        require:true,
-        trim:true,
-        lowercase:true,
-        validate(value){
-            if(!validator.isEmail(value)){
-                throw new Error ('Email Format uncurrect')
+    email: {
+        type: String,
+        require: true,
+        trim: true,
+        lowercase: true,
+        validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error('Email Format uncurrect')
             }
         }
     },
-    password:{
-        type:String,
-        require:true,
-        trim:true,
-        minlength:8
+    password: {
+        type: String,
+        require: true,
+        trim: true,
+        minlength: 8
     }
 })
-module.exports=User
+
+userShema.pre('save',async function (next) {
+    const user = this
+    if (user.isModified('password')) {
+        user.password = await bcrype.hash(user.password ,8)
+    }
+    next()
+})
+const User = mongoose.model('User', userShema)
+module.exports = User
