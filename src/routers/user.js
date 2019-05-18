@@ -6,10 +6,22 @@ router.post('/users', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save()
-        res.status(201).send(user)
+        const token=await user.getToken()
+        res.status(201).send({user,token})
 
     } catch (err) {
         res.status(400).send(err)
+    }
+})
+router.post('/login', async (req, res) => {
+    try {
+        const user = await User.findUserByEmail(req.body.email, req.body.password)
+        const token = await user.getToken()
+        res.send({ user, token })
+    }
+    catch (err) {
+        res.status(401).send(err)
+        console.log(err)
     }
 })
 router.get('/users', async (req, res) => {
@@ -35,10 +47,10 @@ router.get('/users/:id', async (req, res) => {
 })
 router.patch('/users/:id', async (req, res) => {
     const _id = req.params.id
-    const updates=Object.keys(req.body)
+    const updates = Object.keys(req.body)
     try {
-        const user= await User.findById(_id)
-        updates.forEach((update)=>user[update]=req.body[update])
+        const user = await User.findById(_id)
+        updates.forEach((update) => user[update] = req.body[update])
         await user.save()
         if (!user) {
             return res.status(404).send()
@@ -56,6 +68,7 @@ router.delete('/users/:id', async (req, res) => {
         if (!user) {
             res.status(404).send()
         }
+        res.send(user)
     }
     catch (err) {
         res.status(500).send(err)
@@ -63,4 +76,4 @@ router.delete('/users/:id', async (req, res) => {
 })
 
 
-module.exports=router
+module.exports = router

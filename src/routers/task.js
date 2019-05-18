@@ -53,6 +53,7 @@ router.delete('/tasks/:id', async (req, res) => {
         if (!task) {
             res.status(404).send()
         }
+        res.send(task)
     }
     catch (err) {
         res.status(500).send(err)
