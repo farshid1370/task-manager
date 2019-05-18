@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
         trim: true,
-        unique:true,
+        unique: true,
         lowercase: true,
         validate(value) {
             if (!validator.isEmail(value)) {
@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema({
         }
     ]
 })
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.tokens
+    delete userObject.password
+    return userObject
+}
 userSchema.statics.findUserByEmail = async (email, password) => {
     const user = await User.findOne({ email })
     if (!user) {
@@ -60,11 +67,12 @@ userSchema.statics.findUserByEmail = async (email, password) => {
 }
 userSchema.methods.getToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id }, 'Hele dan dan dan hele ye dane',{expiresIn:'7 days'})
+    const token = jwt.sign({ _id: user._id }, 'Hele dan dan dan hele ye dane', { expiresIn: '7 days' })
     user.tokens = user.tokens.concat({ token })
     user.save()
     return token
 }
+
 
 userSchema.pre('save', async function (next) {
     const user = this
