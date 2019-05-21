@@ -46,7 +46,10 @@ const userSchema = new mongoose.Schema({
                 require: true
             }
         }
-    ]
+    ],
+    avatar:{
+        type:Buffer
+    }
 },{timestamps:true})
 userSchema.virtual('tasks',{
     ref:'Task',
@@ -58,6 +61,7 @@ userSchema.methods.toJSON = function () {
     const userObject = user.toObject()
     delete userObject.tokens
     delete userObject.password
+    delete userObject.avatar
     return userObject
 }
 userSchema.statics.findUserByEmail = async (email, password) => {
