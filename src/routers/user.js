@@ -4,10 +4,12 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const sharp = require('sharp')
+const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
 router.post('/signUp', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save()
+        sendWelcomeEmail(user.email, user.firstname, user.lastname)
         const token = await user.getToken()
         res.status(201).send({ user, token })
 
@@ -44,6 +46,7 @@ router.patch('/update', auth, async (req, res) => {
 router.delete('/delete', auth, async (req, res) => {
     try {
         await req.user.remove()
+        sendCancelationEmail(req.user.email, req.user.firstname, req.user.lastname)
         res.send(req.user)
     }
     catch (err) {
@@ -101,8 +104,8 @@ router.delete('/deleteAvatar', auth, async (req, res) => {
 router.get('/getAvatar', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user._id)
-        if(!user || !user.avatar){
-             throw new Error()
+        if (!user || !user.avatar) {
+            throw new Error()
         }
         res.set('Content-Type', 'image/png')
         res.send(user.avatar)

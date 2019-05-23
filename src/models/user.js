@@ -77,7 +77,7 @@ userSchema.statics.findUserByEmail = async (email, password) => {
 }
 userSchema.methods.getToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id }, 'Hele dan dan dan hele ye dane', { expiresIn: '7 days' })
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
     user.tokens = user.tokens.concat({ token })
     user.save()
     return token
