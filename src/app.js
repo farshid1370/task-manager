@@ -4,8 +4,6 @@ const userRoute=require('./routers/user')
 const taskRoute=require('./routers/task')
 
 const app=express()
-const port=process.env.PORT
-
 app.use(express.json())
 app.use('/user',userRoute)
 app.use('/task',taskRoute)
@@ -13,6 +11,4 @@ app.get('*',(req,res)=>{
     res.status(404).send({error:'Route not found'})
 })
 
-app.listen(port,()=>{
-    console.log('Server is up on port '+port)
-})
+module.exports =app
